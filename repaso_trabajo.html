@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repaso: el trabajo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: una columna tranquila, una tarea por bloque. Sin colores: énfasis solo en negrita negra */
+:root {
+  --bg: #F4F3EE;
+  --surface: #FFFFFF;
+  --fg: #1B1F2A;
+  --muted: #5E6472;
+  --line: #DEDCD3;
+  --soft: #ECEAE2;
+  --accent: #2443C9;
+  --accent-soft: #E3E8FB;
+  --postit: #FFF0A3;
+  --postit-fg: #2A2610;
+  --btn: #2443C9;
+  --btn-fg: #FFFFFF;
+  --ok: #1E7A4C;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", Arial, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  --size: 19px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171D; --surface: #1E2129; --fg: #ECEAE3; --muted: #A2A8B5; --line: #343844; --soft: #282C36;
+    --accent: #8EA4FF; --accent-soft: #252C4A; --postit: #4A4320; --postit-fg: #FFF4C2;
+    --btn: #8EA4FF; --btn-fg: #10131C; --ok: #6FD3A0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171D; --surface: #1E2129; --fg: #ECEAE3; --muted: #A2A8B5; --line: #343844; --soft: #282C36;
+  --accent: #8EA4FF; --accent-soft: #252C4A; --postit: #4A4320; --postit-fg: #FFF4C2;
+  --btn: #8EA4FF; --btn-fg: #10131C; --ok: #6FD3A0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { font-size: var(--size); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.6;
+}
+.wrap { max-width: 44rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 4rem; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; text-wrap: balance; letter-spacing: 0; }
+h1 { font-weight: 800; font-size: clamp(2rem, 7vw, 3rem); letter-spacing: -0.02em; margin: 1.6rem 0 0.2rem; }
+h2 { font-size: 1.45rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+h2 .n { font-size: 0.85rem; color: var(--btn-fg); background: var(--accent); border-radius: 6px; display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; margin-right: 0.5rem; vertical-align: 0.2em; }
+p { margin: 0; max-width: 36em; }
+b, strong { font-weight: 700; }
+.sub { color: var(--muted); }
+
+/* barra */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 44rem; margin: 0 auto; padding: 0.45rem 16px; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; align-items: center; justify-content: space-between; font-size: 0.8rem; }
+.steps { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.steps a { font-family: var(--font-display); text-decoration: none; color: var(--fg); border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-width: 1.9rem; height: 1.9rem; display: inline-grid; place-items: center; font-size: 0.8rem; }
+.steps a:hover { border-color: var(--fg); }
+.tools { display: flex; gap: 0.4rem; }
+.tools button { font: inherit; font-family: var(--font-display); border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 8px; padding: 0.2rem 0.6rem; cursor: pointer; }
+
+/* secciones */
+section { padding-block: 1.6rem 2.2rem; border-top: 1px solid var(--line); display: grid; gap: 1rem; scroll-margin-top: 4rem; }
+.part { font-family: var(--font-display); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding-top: 1.6rem; display: flex; gap: 0.8rem; align-items: center; }
+.part::after { content: ""; flex: 1; height: 2px; background: var(--accent); opacity: .3; }
+.task { font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem; display: grid; gap: 0.9rem; min-width: 0; }
+.rule { background: var(--postit); color: var(--postit-fg); padding: 1rem 1.2rem; border-radius: 2px; font-size: 1.05rem; display: grid; gap: 0.4rem; box-shadow: 0 10px 18px -12px rgba(0,0,0,.35); transform: rotate(-0.6deg); max-width: 36rem; }
+.rule:nth-of-type(even) { transform: rotate(0.5deg); }
+.rule .ex { opacity: .78; }
+.row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.center { justify-content: center; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button.act {
+  font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
+  background: var(--btn); color: var(--btn-fg); border: 0; border-radius: 10px;
+  padding: 0.55rem 1rem; min-height: 2.6rem;
+}
+button.soft { background: var(--surface); color: var(--accent); border: 1.5px solid var(--accent); }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+.progress { height: 8px; background: var(--soft); border-radius: 99px; overflow: hidden; width: 100%; }
+.progress i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+.fb { min-height: 1.7em; }
+.count { color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+
+/* tarjetas */
+.flash { border: 2px solid var(--accent); border-radius: 16px; background: var(--surface); min-height: 12rem; display: grid; place-items: center; text-align: center; padding: 1.2rem; gap: 0.6rem; }
+.fl-front { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; line-height: 1.25; }
+.fl-back { display: grid; gap: 0.4rem; justify-items: center; }
+.fl-mean { font-size: 1.15rem; font-weight: 700; }
+.fl-ex { color: var(--muted); max-width: 30em; }
+
+/* relacionar */
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.8rem; align-items: start; }
+.match .col { display: grid; gap: 0.5rem; min-width: 0; }
+.match button { text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 10px; padding: 0.55rem 0.8rem; line-height: 1.4; min-height: 3rem; display: flex; gap: 0.5rem; align-items: center; }
+.match .col.l button { font-family: var(--font-display); font-weight: 600; }
+.match .col.r button { font-size: 0.92rem; }
+.match button:hover { border-color: var(--fg); }
+.match button.sel { border: 3px solid var(--accent); background: var(--accent-soft); }
+.match button.done { background: var(--soft); border-color: var(--soft); color: var(--muted); cursor: default; }
+.match button .tag { font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; min-width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--ok); color: var(--surface); display: inline-grid; place-items: center; flex: none; }
+.match button.no { animation: nudge .3s; }
+@keyframes nudge { 0%,100% { transform: translateX(0); } 30% { transform: translateX(-5px); } 60% { transform: translateX(5px); } }
+@media (max-width: 520px) { .match { grid-template-columns: 1fr; } .match .col.r { border-top: 1px dashed var(--line); padding-top: 0.6rem; } }
+
+/* elegir */
+.chq { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.55; }
+.chq .gap { display: inline-block; min-width: 4.5em; border-bottom: 3px solid var(--accent); text-align: center; }
+.hint { color: var(--muted); }
+.opts button { font-family: var(--font-display); font-size: 1.1rem; padding: 0.5rem 1rem; border: 2px solid var(--line); background: var(--surface); border-radius: 10px; }
+.opts button:hover { border-color: var(--fg); }
+.opts button.right { border-color: var(--ok); border-width: 3px; color: var(--ok); font-weight: 700; }
+.opts button.wrong { opacity: 0.4; text-decoration: line-through; }
+
+/* tablas */
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-family: var(--font-display); font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+
+/* hablar */
+.q { display: grid; gap: 0.5rem; padding-block: 0.8rem; border-bottom: 1px dashed var(--line); }
+.q:last-child { border-bottom: 0; }
+.q p { font-size: 1.15rem; font-family: var(--font-display); }
+.sit { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.6rem; }
+.sit div { border: 0; border-radius: 2px; padding: 0.8rem 1rem; background: var(--postit); color: var(--postit-fg); box-shadow: 0 8px 14px -10px rgba(0,0,0,.35); display: grid; gap: 0.3rem; }
+.sit b { font-family: var(--font-display); }
+.sit span { opacity: .8; font-size: 0.9rem; }
+@media (max-width: 480px) { .chq { font-size: 1.15rem; } .fl-front { font-size: 1.5rem; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <nav class="steps" aria-label="Ejercicios">
+      <a href="#s1">1</a><a href="#s2">2</a><a href="#s3">3</a><a href="#s4">4</a><a href="#s5">5</a>
+    </nav>
+    <div class="tools">
+      <button id="smaller" aria-label="Texto más pequeño">A−</button>
+      <button id="bigger" aria-label="Texto más grande">A+</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <h1>Repaso: el trabajo</h1>
+  <p class="sub">Léxico de la clase y gramática: <b>se me da</b>, <b>se me rompió</b>, <b>se me ha caído</b>.</p>
+
+  <div class="part">Léxico</div>
+
+  <!-- 1 -->
+  <section id="s1">
+    <h2><span class="n">1</span>Relaciona la expresión con su significado</h2>
+    <div class="box">
+      <p class="task">Toca una expresión y luego su significado</p>
+      <div class="match" id="match"></div>
+      <div class="row"><span class="count" id="match-count"></span><button class="act soft" id="match-reset">Empezar otra vez</button></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <h2><span class="n">2</span>Completa la frase</h2>
+    <div class="box">
+      <p class="task">Elige la palabra correcta</p>
+      <div id="mc-lex"></div>
+    </div>
+  </section>
+
+  <div class="part">Gramática</div>
+
+  <!-- 3 -->
+  <section id="s3">
+    <h2><span class="n">3</span>Se me da bien, se me dan mal</h2>
+    <div class="rule">
+      <p><b>se</b> + <b>me / te / le / nos / os / les</b> + <b>da</b> + infinitivo o una cosa</p>
+      <p><b>se</b> + <b>me / te / le / nos / os / les</b> + <b>dan</b> + varias cosas</p>
+      <p class="ex">Se me <b>da</b> bien cocinar. · Se me <b>dan</b> mal las matemáticas.</p>
+      <p class="ex">Primero siempre <b>se</b>: se me da ✔ · <s>me se da</s> ✘</p>
+    </div>
+    <div class="box">
+      <p class="task">Elige la forma correcta</p>
+      <div id="mc-da"></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <h2><span class="n">4</span>Ayer: se me rompió, se me rompieron</h2>
+    <div class="rule">
+      <p>Con <b>ayer, anoche, la semana pasada, el lunes…</b> usamos el indefinido:</p>
+      <p class="ex">se me romp<b>ió</b> el móvil · se me olvid<b>aron</b> las llaves</p>
+      <p class="ex">-ar: olvid<b>ó</b> / olvid<b>aron</b> · -er: perd<b>ió</b> / perd<b>ieron</b></p>
+    </div>
+    <div class="box">
+      <p class="task">¿Una cosa o varias? Elige</p>
+      <div id="mc-indef"></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <h2><span class="n">5</span>¿Hoy o ayer?</h2>
+    <div class="rule">
+      <p><b>hoy, esta mañana, este mes</b> → se me <b>ha</b> caído</p>
+      <p><b>ayer, el año pasado, en 2020</b> → se me <b>cayó</b></p>
+    </div>
+    <div class="box">
+      <p class="task">Mira la palabra de tiempo y elige</p>
+      <div id="mc-time"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem('trabajo-' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('trabajo-' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  /* tamaño */
+  var size = store.get('size', 20);
+  function applySize() { document.documentElement.style.setProperty('--size', size + 'px'); store.set('size', size); }
+  $('bigger').onclick = function () { size = Math.min(28, size + 2); applySize(); };
+  $('smaller').onclick = function () { size = Math.max(16, size - 2); applySize(); };
+  applySize();
+
+  /* ---------- léxico ---------- */
+  /* 2 relacionar */
+  var PAIRS = [
+    ['inventarse una excusa', 'decir una razón falsa'],
+    ['faltar al trabajo', 'no ir a trabajar'],
+    ['saltarse una reunión', 'no ir a una reunión a propósito'],
+    ['colar', 'una mentira funciona: la gente se la cree'],
+    ['colarse', 'entrar en una fila sin esperar'],
+    ['currar', 'trabajar (coloquial)'],
+    ['conciliar', 'combinar trabajo y familia'],
+    ['aguantar', 'soportar algo difícil'],
+    ['mimado / consentido', 'un niño al que le dan todo lo que quiere'],
+    ['irse la olla', 'olvidarse de algo o hacer algo sin pensar (coloquial)']
+  ];
+  function buildMatch() {
+    var root = $('match'), selL = null, selR = null, done = 0;
+    root.innerHTML = '';
+    var L = el('div', 'col l'), R = el('div', 'col r');
+    PAIRS.forEach(function (p, k) { var b = el('button', '', '<span>' + p[0] + '</span>'); b.dataset.k = k; L.appendChild(b); });
+    shuffle(PAIRS.map(function (p, k) { return k; })).forEach(function (k) { var b = el('button', '', '<span>' + PAIRS[k][1] + '</span>'); b.dataset.k = k; R.appendChild(b); });
+    root.appendChild(L); root.appendChild(R);
+    function upd() { $('match-count').textContent = done === PAIRS.length ? '¡Perfecto! ' + done + ' de ' + PAIRS.length : 'Parejas: ' + done + ' de ' + PAIRS.length; }
+    function check() {
+      if (!selL || !selR) return;
+      if (selL.dataset.k === selR.dataset.k) {
+        done++;
+        [selL, selR].forEach(function (b) { b.classList.remove('sel'); b.classList.add('done'); b.disabled = true; b.insertAdjacentHTML('afterbegin', '<span class="tag">' + done + '</span>'); });
+        upd();
+      } else {
+        var r = selR; r.classList.remove('sel'); r.classList.remove('no'); void r.offsetWidth; r.classList.add('no');
+      }
+      if (selL && selL.classList.contains('done')) { selL = null; }
+      selR = null;
+    }
+    L.onclick = function (e) { var b = e.target.closest('button'); if (!b || b.disabled) return; if (selL) selL.classList.remove('sel'); selL = b; b.classList.add('sel'); check(); };
+    R.onclick = function (e) { var b = e.target.closest('button'); if (!b || b.disabled) return; if (selR) selR.classList.remove('sel'); selR = b; b.classList.add('sel'); check(); };
+    upd();
+  }
+  $('match-reset').onclick = buildMatch;
+  buildMatch();
+
+  /* ejercicio de elegir */
+  // item: { q: 'texto con ___', hint, ok, bad[], why }
+  function choice(id, items) {
+    var root = $(id), i = 0, score = 0, order = items;
+    root.innerHTML = '<div style="display:grid;gap:0.9rem"><div class="progress"><i></i></div><span class="count"></span><p class="chq"></p><p class="hint"></p>' +
+      '<div class="row opts"></div><div class="fb" aria-live="polite"></div><div class="row"><button class="act soft" hidden>Siguiente →</button></div></div>';
+    var prog = root.querySelector('.progress i'), cnt = root.querySelector('.count'), qEl = root.querySelector('.chq'), hint = root.querySelector('.hint'),
+      opts = root.querySelector('.opts'), fb = root.querySelector('.fb'), next = root.querySelector('button.act');
+    function fill(html) { return order[i].q.replace('___', '<span class="gap">' + html + '</span>'); }
+    function show() {
+      prog.style.width = (i / order.length * 100) + '%';
+      fb.innerHTML = ''; next.hidden = true; opts.innerHTML = '';
+      if (i >= order.length) {
+        cnt.textContent = ''; hint.textContent = '';
+        qEl.textContent = score + ' de ' + order.length;
+        fb.textContent = score === order.length ? '¡Perfecto!' : '¡Bien! Puedes hacerlo otra vez.';
+        next.textContent = 'Otra vez'; next.hidden = false; return;
+      }
+      var it = order[i], done = false;
+      cnt.textContent = (i + 1) + ' de ' + order.length;
+      qEl.innerHTML = fill('&nbsp;');
+      hint.textContent = it.hint || '';
+      shuffle([it.ok].concat(it.bad)).forEach(function (w) {
+        var b = el('button'); b.textContent = w;
+        b.onclick = function () {
+          if (done) return; done = true;
+          var ok = w === it.ok; if (ok) score++;
+          Array.prototype.forEach.call(opts.children, function (x) { x.classList.add(x.textContent === it.ok ? 'right' : 'wrong'); });
+          qEl.innerHTML = fill('<b>' + it.ok + '</b>');
+          fb.innerHTML = (ok ? '¡Sí! ' : 'Es: <b>' + it.ok + '</b>. ') + (it.why || '');
+          next.textContent = 'Siguiente →'; next.hidden = false; next.focus();
+        };
+        opts.appendChild(b);
+      });
+    }
+    next.onclick = function () { if (i >= order.length) { i = 0; score = 0; order = shuffle(items); } else i++; show(); };
+    show();
+  }
+
+  /* 3 completa */
+  choice('mc-lex', [
+    { q: 'Ayer no fui a la oficina: ___ al trabajo porque estaba enfermo.', ok: 'falté', bad: ['me salté', 'me colé'] },
+    { q: 'No tenía cita con el médico: me ___ una excusa.', ok: 'inventé', bad: ['colé', 'aguanté'] },
+    { q: 'El jefe no se creyó la excusa: no ___.', ok: 'coló', bad: ['se coló', 'curró'] },
+    { q: 'Un señor ___ en la cola del autobús.', ok: 'se coló', bad: ['coló', 'faltó'] },
+    { q: 'Hoy no puedo salir: tengo mucho ___.', ok: 'curro', bad: ['colar', 'consentido'] },
+    { q: 'Con este horario es muy difícil ___ la vida laboral y familiar.', ok: 'conciliar', bad: ['aguantar', 'colar'] },
+    { q: 'Mi primer trabajo era horrible. Solo ___ dos meses.', ok: 'aguanté', bad: ['me colé', 'concilié'] },
+    { q: 'De estudiante trabajé ___: cuidaba a dos niños.', ok: 'de niñera', bad: ['de curro', 'de excusa'] },
+    { q: 'Los niños lo tienen todo y nunca obedecen: están muy ___.', ok: 'mimados', bad: ['aguantados', 'conciliados'] },
+    { q: 'Sus padres le compran todo lo que pide: es un niño muy ___.', ok: 'mimado', bad: ['currado', 'colado'] },
+    { q: 'De niñera cuidaba a dos niños muy ___: lloraban si no les daba chocolate.', ok: 'mimados', bad: ['faltados', 'saltados'] },
+    { q: 'No fue a la reunión de las nueve: se la ___.', ok: 'saltó', bad: ['faltó', 'coló'] },
+    { q: '¡He metido el móvil en la nevera! Se me ha ido ___.', ok: 'la olla', bad: ['el curro', 'la cola'] },
+    { q: 'Ganar dinero es importante, pero el trabajo no lo ___.', ok: 'es todo', bad: ['da bien', 'cuela'] }
+  ]);
+
+  /* 4 se me da */
+  choice('mc-da', [
+    { q: 'A mí ___ bien los idiomas.', ok: 'se me dan', bad: ['se me da', 'me se dan'], why: 'Los idiomas: varias cosas → dan.' },
+    { q: 'A Juan ___ fatal cocinar.', ok: 'se le da', bad: ['se le dan', 'se me da'], why: 'Infinitivo → da. A Juan → le.' },
+    { q: '¿A ti ___ bien las matemáticas?', ok: 'se te dan', bad: ['se te da', 'te se dan'], why: 'Las matemáticas: plural → dan.' },
+    { q: 'A nosotros ___ bien trabajar en equipo.', ok: 'se nos da', bad: ['se nos dan', 'nos se da'], why: 'Infinitivo → da.' },
+    { q: 'A mis compañeros ___ mal hablar en público.', ok: 'se les da', bad: ['se les dan', 'se le da'], why: 'A ellos → les. Infinitivo → da.' },
+    { q: 'A mí ___ mal las reuniones largas.', ok: 'se me dan', bad: ['se me da', 'me se da'], why: 'Las reuniones: plural → dan.' },
+    { q: 'A mi jefa ___ muy bien el inglés.', ok: 'se le da', bad: ['se le dan', 'se la da'], why: 'El inglés: una cosa → da.' }
+  ]);
+
+  /* 6 indefinido */
+  choice('mc-indef', [
+    { q: 'Ayer se me ___ el móvil.', hint: '(romper)', ok: 'rompió', bad: ['rompieron', 'ha roto'], why: 'Ayer + una cosa → rompió.' },
+    { q: 'La semana pasada se me ___ las llaves en la oficina.', hint: '(olvidar)', ok: 'olvidaron', bad: ['olvidó', 'olvidé'], why: 'Las llaves: plural → olvidaron.' },
+    { q: 'El lunes a Ana se le ___ la cartera en el metro.', hint: '(perder)', ok: 'perdió', bad: ['perdieron', 'perdí'], why: 'La cartera: una cosa → perdió.' },
+    { q: 'En el viaje se nos ___ dos ruedas.', hint: '(pinchar)', ok: 'pincharon', bad: ['pinchó', 'pinchamos'], why: 'Dos ruedas → pincharon.' },
+    { q: 'Anoche se me ___ la cena.', hint: '(quemar)', ok: 'quemó', bad: ['quemaron', 'quemé'], why: 'La cena → quemó.' },
+    { q: 'Anoche se nos ___ la casa: había agua por todas partes.', hint: '(inundar)', ok: 'inundó', bad: ['inundaron', 'inundamos'], why: 'La casa: una cosa → inundó.' },
+    { q: 'El martes se me ___ una rueda de la bici.', hint: '(pinchar)', ok: 'pinchó', bad: ['pincharon', 'pinché'], why: 'Una rueda → pinchó.' },
+    { q: 'En el viaje a Sevilla a mis padres se les ___ dos ruedas.', hint: '(pinchar)', ok: 'pincharon', bad: ['pinchó', 'pinchasteis'], why: 'Dos ruedas → pincharon.' },
+    { q: '¿Ayer se te ___ el autobús?', hint: '(escapar)', ok: 'escapó', bad: ['escaparon', 'escapaste'], why: 'El autobús → escapó.' },
+    { q: 'El viernes a mis compañeros se les ___ los documentos.', hint: '(perder)', ok: 'perdieron', bad: ['perdió', 'perdimos'], why: 'Los documentos → perdieron.' }
+  ]);
+
+  /* 7 hoy o ayer */
+  choice('mc-time', [
+    { q: 'Hoy se me ___ el café en el teclado.', hint: '(caer)', ok: 'ha caído', bad: ['cayó'], why: 'Hoy → ha caído.' },
+    { q: 'Ayer se me ___ el café en el teclado.', hint: '(caer)', ok: 'cayó', bad: ['ha caído'], why: 'Ayer → cayó.' },
+    { q: 'Esta mañana se me ___ la reunión.', hint: '(olvidar)', ok: 'ha olvidado', bad: ['olvidó'], why: 'Esta mañana → ha olvidado.' },
+    { q: 'El año pasado se me ___ el contrato.', hint: '(acabar)', ok: 'acabó', bad: ['ha acabado'], why: 'El año pasado → acabó.' },
+    { q: 'Este mes se me ___ dos veces el ordenador.', hint: '(estropear)', ok: 'ha estropeado', bad: ['estropeó'], why: 'Este mes → ha estropeado.' },
+    { q: 'Hoy se me ___ la casa: ¡no puedo ir a trabajar!', hint: '(inundar)', ok: 'ha inundado', bad: ['inundó'], why: 'Hoy → ha inundado.' },
+    { q: 'El invierno pasado se nos ___ la casa.', hint: '(inundar)', ok: 'inundó', bad: ['ha inundado'], why: 'El invierno pasado → inundó.' },
+    { q: 'Esta mañana se me ___ una rueda y he llegado tarde.', hint: '(pinchar)', ok: 'ha pinchado', bad: ['pinchó'], why: 'Esta mañana → ha pinchado.' },
+    { q: 'Ayer se le ___ una rueda al jefe.', hint: '(pinchar)', ok: 'pinchó', bad: ['ha pinchado'], why: 'Ayer → pinchó.' },
+    { q: 'En 2020 se me ___ el pasaporte.', hint: '(perder)', ok: 'perdió', bad: ['ha perdido'], why: 'En 2020 → perdió.' }
+  ]);
+
+})();
+</script>
+</body>
+</html>
